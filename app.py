@@ -11,7 +11,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 SCOPE = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", SCOPE)
+# ✅ Load creds from Streamlit Secrets instead of JSON file
+service_account_info = dict(st.secrets["gcp_service_account"])
+creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, SCOPE)
 client = gspread.authorize(creds)
 
 SHEET_NAME = "Production Tracker"
@@ -29,7 +31,6 @@ if not sheet.get_all_values():
         "Total Persons", "Actual Production",
         "Per Hour Production", "Per Man Hour", "Packaging Cost", "Remark", "Status"
     ])
-
 # -------------------------------
 # Streamlit UI
 # -------------------------------
