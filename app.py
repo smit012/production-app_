@@ -5,12 +5,13 @@ import io
 import gspread
 from google.oauth2.service_account import Credentials  # ✅ use google-auth instead
 
-SCOPE = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
+SCOPE = ["https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive"]
 
-creds = Credentials.from_service_account_file("service_account.json", scopes=SCOPE)
+creds = Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"], scopes=SCOPE
+)
+
 client = gspread.authorize(creds)
 
 SHEET_NAME = "Production Tracker"
@@ -176,3 +177,4 @@ if records:
     )
 else:
     st.info("No completed records yet.")
+
