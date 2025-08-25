@@ -128,12 +128,20 @@ if st.session_state.running_tasks:
             row = task["Row"]
 
             # 🔥 Update existing row instead of appending
-            sheet.update(f"D{row}", end_time.strftime("%H:%M:%S"))  # End Time
-            sheet.update(f"E{row}", round(hours, 2))                # Hours
-            sheet.update(f"H{row}", round(per_hour, 2))             # Per Hour
-            sheet.update(f"I{row}", round(per_man_hour, 2))         # Per Man Hour
-            sheet.update(f"J{row}", round(packaging_cost, 2))       # Packaging Cost
-            sheet.update(f"L{row}", "Completed")                    # Status
+           # sheet.update(f"D{row}", end_time.strftime("%H:%M:%S"))  # End Time
+           # sheet.update(f"E{row}", round(hours, 2))                # Hours
+           # sheet.update(f"H{row}", round(per_hour, 2))             # Per Hour
+            #sheet.update(f"I{row}", round(per_man_hour, 2))         # Per Man Hour
+           # sheet.update(f"J{row}", round(packaging_cost, 2))       # Packaging Cost
+           # sheet.update(f"L{row}", "Completed")                    # Status
+
+            sheet.update_cell(row, 4, end_time.strftime("%H:%M:%S"))  # Column D = 4
+            sheet.update_cell(row, 5, round(hours, 2))                # Column E = 5
+            sheet.update_cell(row, 8, round(per_hour, 2))             # Column H = 8
+            sheet.update_cell(row, 9, round(per_man_hour, 2))         # Column I = 9
+            sheet.update_cell(row, 10, round(packaging_cost, 2))      # Column J = 10
+            sheet.update_cell(row, 12, "Completed")                   # Column L = 12
+
 
             del st.session_state.running_tasks[task_id]
             st.success(f"✅ Task ended: {task['Product Name']}")
@@ -141,7 +149,7 @@ if st.session_state.running_tasks:
         # Cancel Task
         if col4.button("❌ Cancel", key=f"cancel_{task_id}"):
             row = task["Row"]
-            sheet.update(f"L{row}", "Cancelled")
+            sheet.update_cell(f"L{row}", "Cancelled")
             del st.session_state.running_tasks[task_id]
             st.warning(f"🚫 Task cancelled: {task['Product Name']}")
 
@@ -177,4 +185,5 @@ if records:
     )
 else:
     st.info("No completed records yet.")
+
 
