@@ -8,13 +8,18 @@ from google.oauth2.service_account import Credentials  # ✅ use google-auth ins
 # -------------------------------
 # Google Sheets Setup
 # -------------------------------
-SCOPE = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
 
-# ✅ Load creds from Streamlit Secrets instead of JSON file
 service_account_info = dict(st.secrets["gcp_service_account"])
-creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPE)  # ✅
+creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPE)
 client = gspread.authorize(creds)
+
+# Debug list of accessible sheets
+sheets = [s.title for s in client.openall()]
+st.write("Accessible Sheets:", sheets)
 
 SHEET_NAME = "Production Tracker"
 try:
@@ -177,5 +182,6 @@ if records:
     )
 else:
     st.info("No completed records yet.")
+
 
 
