@@ -5,28 +5,20 @@ import io
 import gspread
 from google.oauth2.service_account import Credentials  # ✅ use google-auth instead
 
-# -------------------------------
-# Google Sheets Setup
-# -------------------------------
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
-service_account_info = dict(st.secrets["gcp_service_account"])
-creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPE)
+creds = Credentials.from_service_account_file("service_account.json", scopes=SCOPE)
 client = gspread.authorize(creds)
-
-# Debug list of accessible sheets
-sheets = [s.title for s in client.openall()]
-st.write("Accessible Sheets:", sheets)
 
 SHEET_NAME = "Production Tracker"
 try:
     sheet = client.open(SHEET_NAME).sheet1
 except gspread.SpreadsheetNotFound:
     sh = client.create(SHEET_NAME)
-    sh.share(creds.service_account_email, perm_type="user", role="writer")  # ✅ works now
+    sh.share(creds.service_account_email, perm_type="user", role="writer")
     sheet = sh.sheet1
 
 # ✅ Always ensure header row exists
@@ -36,11 +28,13 @@ if not sheet.get_all_values():
         "Total Persons", "Actual Production",
         "Per Hour Production", "Per Man Hour", "Packaging Cost", "Remark", "Status"
     ])
+
 # -------------------------------
 # Streamlit UI
 # -------------------------------
-st.set_page_config(page_title="Production Tracker", layout="centered")
+st.set_page_config(page_title="Production Tracker", layout="wide")
 st.title("📊 Multi-Task Production Tracker")
+
 
 if "running_tasks" not in st.session_state:
     st.session_state.running_tasks = {}
@@ -182,6 +176,3 @@ if records:
     )
 else:
     st.info("No completed records yet.")
-
-
-
