@@ -149,7 +149,9 @@ if st.session_state.running_tasks:
         # Cancel Task
         if col4.button("❌ Cancel", key=f"cancel_{task_id}"):
             row = task["Row"]
-            sheet.update_cell(f"L{row}", "Cancelled")
+           # sheet.update_cell(f"L{row}", "Cancelled")
+            sheet.update_cell(row, 12, "Cancelled")
+
             del st.session_state.running_tasks[task_id]
             st.warning(f"🚫 Task cancelled: {task['Product Name']}")
 
@@ -185,5 +187,6 @@ if records:
     )
 else:
     st.info("No completed records yet.")
+
 
 
