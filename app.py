@@ -178,3 +178,4 @@ if records:
 else:
     st.info("No completed records yet.")
 
+
