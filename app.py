@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 import io
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials  # ✅ use google-auth instead
 
 # -------------------------------
 # Google Sheets Setup
@@ -13,7 +13,7 @@ SCOPE = ["https://spreadsheets.google.com/feeds",
 
 # ✅ Load creds from Streamlit Secrets instead of JSON file
 service_account_info = dict(st.secrets["gcp_service_account"])
-creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, SCOPE)
+creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPE)  # ✅
 client = gspread.authorize(creds)
 
 SHEET_NAME = "Production Tracker"
@@ -21,7 +21,7 @@ try:
     sheet = client.open(SHEET_NAME).sheet1
 except gspread.SpreadsheetNotFound:
     sh = client.create(SHEET_NAME)
-    sh.share(creds.service_account_email, perm_type="user", role="writer")
+    sh.share(creds.service_account_email, perm_type="user", role="writer")  # ✅ works now
     sheet = sh.sheet1
 
 # ✅ Always ensure header row exists
@@ -177,3 +177,4 @@ if records:
     )
 else:
     st.info("No completed records yet.")
+
